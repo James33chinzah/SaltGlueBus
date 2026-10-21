@@ -1,0 +1,10 @@
+#include "PluginEditor.h"
+SaltGlueBusAudioProcessorEditor::SaltGlueBusAudioProcessorEditor(SaltGlueBusAudioProcessor& p) : AudioProcessorEditor(&p), processor(p) {
+    setSize(620, 360); title.setText("SALT GLUE BUS", juce::dontSendNotification); title.setJustificationType(juce::Justification::centred); title.setFont(juce::Font(juce::FontOptions(25.f, juce::Font::bold))); addAndMakeVisible(title);
+    setupSlider(salt,"SALT / DRIVE"); setupSlider(glue,"GLUE"); setupSlider(low,"LOW"); setupSlider(beef,"BEEF"); setupSlider(body,"BODY"); setupSlider(air,"AIR"); setupSlider(output,"OUTPUT"); setupSlider(mix,"MIX"); addAndMakeVisible(punch);
+    auto& s=processor.state;
+    aSalt=std::make_unique<Attachment>(s,"drive",salt); aGlue=std::make_unique<Attachment>(s,"amount",glue); aLow=std::make_unique<Attachment>(s,"low",low); aBeef=std::make_unique<Attachment>(s,"beef",beef); aBody=std::make_unique<Attachment>(s,"body",body); aAir=std::make_unique<Attachment>(s,"air",air); aOutput=std::make_unique<Attachment>(s,"loud",output); aMix=std::make_unique<Attachment>(s,"mix",mix); aPunch=std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(s,"punch",punch);
+}
+void SaltGlueBusAudioProcessorEditor::setupSlider(juce::Slider& s, const juce::String& name) { s.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag); s.setTextBoxStyle(juce::Slider::TextBoxBelow,false,70,20); s.setName(name); addAndMakeVisible(s); }
+void SaltGlueBusAudioProcessorEditor::paint(juce::Graphics& g) { g.fillAll(juce::Colour(0xff17191c)); g.setColour(juce::Colour(0xffd6a34a)); g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(8),12,2); g.setColour(juce::Colour(0xffd6a34a)); g.setFont(12.f); g.drawText("GLUE  •  LOW-END CONTROL  •  TONE  •  OUTPUT", 20, 45, getWidth()-40, 20, juce::Justification::centred); }
+void SaltGlueBusAudioProcessorEditor::resized() { title.setBounds(20,10,getWidth()-40,34); const int top=80, w=140, h=115; juce::Slider* ss[]={&salt,&glue,&low,&beef,&body,&air,&output,&mix}; for(int i=0;i<8;++i) ss[i]->setBounds(20+(i%4)*145,top+(i/4)*125,w,h); punch.setBounds(235,325,150,24); }
